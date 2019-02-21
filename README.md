@@ -1,30 +1,24 @@
-# `D2Sqlite3`
+# `D2SQLCipher`
 
-[![Build Status](https://travis-ci.org/biozic/d2sqlite3.svg)](https://travis-ci.org/biozic/d2sqlite3)
-[![Dub](https://img.shields.io/dub/v/d2sqlite3.svg)](http://code.dlang.org/packages/d2sqlite3)
-[![Downloads](https://img.shields.io/dub/dt/d2sqlite3.svg)](https://code.dlang.org/packages/d2sqlite3)
-
-This is a small wrapper around SQLite for the D programming language.
+This is a small wrapper around SQLite3/SQLCipher for the D programming language.
 It wraps the C API in an idiomatic manner and handles built-in D types and
 `Nullable!T` automatically.
 
-## Documentation
-
-[Online documentation](http://biozic.github.io/d2sqlite3/d2sqlite3.html)
-
 ## `dub` configurations
 
-- **`with-lib`** (the default): assumes that SQLite is already installed and available to the linker. Set the right path for the SQLite library in your project's `dub.json` file using the `lflags` setting:
+- **`vanilla`** (the default): use already installed version of vanilla SQLite. Set the right path for the SQLite library in your project's `dub.json` file using the `lflags` setting:
 
 ```json
     "lflags": ["-L/path/to/lib"]
 ```
 
-- **`without-lib`**: you manage linking SQLite yourself.
+- **`sqlcipher`**: use already installed version of SQLCipher. Set the right path for the SQLCipher library in your project's `dub.json` file using the `lflags` setting:
 
-- **`all-included`**: on Windows, use a prebuilt SQLite DLL (bundled with this library); on Posix systems, builds SQLite from the source amalgamation (bundled with this library), using the default building configuration with these options defined:
-  - SQLITE_ENABLE_COLUMN_METADATA
-  - SQLITE_ENABLE_UNLOCK_NOTIFY
+```json
+    "lflags": ["-L/path/to/lib"]
+```
+
+- **`no-lib`**: you manage linking SQLite yourself.
 
 Set the right configuration for you project in its `dub.json` file using the `subConfigurations` setting, e.g.:
 
