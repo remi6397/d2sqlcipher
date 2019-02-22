@@ -1,10 +1,8 @@
 .dub
 dub.selections.json
 __test__*
-d2sqlite3-test*
-libd2sqlite3.a
-TODO.txt
+d2sqlcipher-test*
+libd2sqlcipher.a
 docs.json
 docs
 sqlite3.o
-lib/*/*.lib

@@ -1,4 +1,3 @@
-/++ Auto-generated C API bindings. +/
 /*
 ** 2001-09-15
 **
@@ -99,9 +98,9 @@ nothrow:
 ** [sqlite3_libversion_number()], [sqlite3_sourceid()],
 ** [sqlite_version()] and [sqlite_source_id()].
 */
-enum SQLITE_VERSION = "3.25.3";
-enum SQLITE_VERSION_NUMBER = 3025003;
-enum SQLITE_SOURCE_ID = "2018-11-05 20:37:38 89e099fbe5e13c33e683bef07361231ca525b88f7907be7092058007b75036f2";
+enum SQLITE_VERSION = "3.26.0";
+enum SQLITE_VERSION_NUMBER = 3026000;
+enum SQLITE_SOURCE_ID = "2018-12-01 12:34:55 bf8c1b2b7a5960c282e543b9c293686dccff272512d08865f4600fb58238alt1";
 
 /*
 ** CAPI3REF: Run-Time Library Version Numbers
@@ -639,133 +638,103 @@ enum SQLITE_SYNC_DATAONLY = 0x00010;
 */
 struct sqlite3_file
 {
- /* Methods for an open file */
-
-    /*
-    ** CAPI3REF: OS Interface File Virtual Methods Object
-    **
-    ** Every file opened by the [sqlite3_vfs.xOpen] method populates an
-    ** [sqlite3_file] object (or, more commonly, a subclass of the
-    ** [sqlite3_file] object) with a pointer to an instance of this object.
-    ** This object defines the methods used to perform various operations
-    ** against the open file represented by the [sqlite3_file] object.
-    **
-    ** If the [sqlite3_vfs.xOpen] method sets the sqlite3_file.pMethods element
-    ** to a non-NULL pointer, then the sqlite3_io_methods.xClose method
-    ** may be invoked even if the [sqlite3_vfs.xOpen] reported that it failed.  The
-    ** only way to prevent a call to xClose following a failed [sqlite3_vfs.xOpen]
-    ** is for the [sqlite3_vfs.xOpen] to set the sqlite3_file.pMethods element
-    ** to NULL.
-    **
-    ** The flags argument to xSync may be one of [SQLITE_SYNC_NORMAL] or
-    ** [SQLITE_SYNC_FULL].  The first choice is the normal fsync().
-    ** The second choice is a Mac OS X style fullsync.  The [SQLITE_SYNC_DATAONLY]
-    ** flag may be ORed in to indicate that only the data of the file
-    ** and not its inode needs to be synced.
-    **
-    ** The integer values to xLock() and xUnlock() are one of
-    ** <ul>
-    ** <li> [SQLITE_LOCK_NONE],
-    ** <li> [SQLITE_LOCK_SHARED],
-    ** <li> [SQLITE_LOCK_RESERVED],
-    ** <li> [SQLITE_LOCK_PENDING], or
-    ** <li> [SQLITE_LOCK_EXCLUSIVE].
-    ** </ul>
-    ** xLock() increases the lock. xUnlock() decreases the lock.
-    ** The xCheckReservedLock() method checks whether any database connection,
-    ** either in this process or in some other process, is holding a RESERVED,
-    ** PENDING, or EXCLUSIVE lock on the file.  It returns true
-    ** if such a lock exists and false otherwise.
-    **
-    ** The xFileControl() method is a generic interface that allows custom
-    ** VFS implementations to directly control an open file using the
-    ** [sqlite3_file_control()] interface.  The second "op" argument is an
-    ** integer opcode.  The third argument is a generic pointer intended to
-    ** point to a structure that may contain arguments or space in which to
-    ** write return values.  Potential uses for xFileControl() might be
-    ** functions to enable blocking locks with timeouts, to change the
-    ** locking strategy (for example to use dot-file locks), to inquire
-    ** about the status of a lock, or to break stale locks.  The SQLite
-    ** core reserves all opcodes less than 100 for its own use.
-    ** A [file control opcodes | list of opcodes] less than 100 is available.
-    ** Applications that define a custom xFileControl method should use opcodes
-    ** greater than 100 to avoid conflicts.  VFS implementations should
-    ** return [SQLITE_NOTFOUND] for file control opcodes that they do not
-    ** recognize.
-    **
-    ** The xSectorSize() method returns the sector size of the
-    ** device that underlies the file.  The sector size is the
-    ** minimum write that can be performed without disturbing
-    ** other bytes in the file.  The xDeviceCharacteristics()
-    ** method returns a bit vector describing behaviors of the
-    ** underlying device:
-    **
-    ** <ul>
-    ** <li> [SQLITE_IOCAP_ATOMIC]
-    ** <li> [SQLITE_IOCAP_ATOMIC512]
-    ** <li> [SQLITE_IOCAP_ATOMIC1K]
-    ** <li> [SQLITE_IOCAP_ATOMIC2K]
-    ** <li> [SQLITE_IOCAP_ATOMIC4K]
-    ** <li> [SQLITE_IOCAP_ATOMIC8K]
-    ** <li> [SQLITE_IOCAP_ATOMIC16K]
-    ** <li> [SQLITE_IOCAP_ATOMIC32K]
-    ** <li> [SQLITE_IOCAP_ATOMIC64K]
-    ** <li> [SQLITE_IOCAP_SAFE_APPEND]
-    ** <li> [SQLITE_IOCAP_SEQUENTIAL]
-    ** <li> [SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN]
-    ** <li> [SQLITE_IOCAP_POWERSAFE_OVERWRITE]
-    ** <li> [SQLITE_IOCAP_IMMUTABLE]
-    ** <li> [SQLITE_IOCAP_BATCH_ATOMIC]
-    ** </ul>
-    **
-    ** The SQLITE_IOCAP_ATOMIC property means that all writes of
-    ** any size are atomic.  The SQLITE_IOCAP_ATOMICnnn values
-    ** mean that writes of blocks that are nnn bytes in size and
-    ** are aligned to an address which is an integer multiple of
-    ** nnn are atomic.  The SQLITE_IOCAP_SAFE_APPEND value means
-    ** that when data is appended to a file, the data is appended
-    ** first then the size of the file is extended, never the other
-    ** way around.  The SQLITE_IOCAP_SEQUENTIAL property means that
-    ** information is written to disk in the same order as calls
-    ** to xWrite().
-    **
-    ** If xRead() returns SQLITE_IOERR_SHORT_READ it must also fill
-    ** in the unread portions of the buffer with zeros.  A VFS that
-    ** fails to zero-fill short reads might seem to work.  However,
-    ** failure to zero-fill short reads will eventually lead to
-    ** database corruption.
-    */
-
-    struct sqlite3_io_methods
-    {
-        int iVersion;
-        int function(sqlite3_file*) xClose;
-        int function(sqlite3_file*, void*, int iAmt, sqlite3_int64 iOfst) xRead;
-        int function(sqlite3_file*, const(void)*, int iAmt, sqlite3_int64 iOfst) xWrite;
-        int function(sqlite3_file*, sqlite3_int64 size) xTruncate;
-        int function(sqlite3_file*, int flags) xSync;
-        int function(sqlite3_file*, sqlite3_int64* pSize) xFileSize;
-        int function(sqlite3_file*, int) xLock;
-        int function(sqlite3_file*, int) xUnlock;
-        int function(sqlite3_file*, int* pResOut) xCheckReservedLock;
-        int function(sqlite3_file*, int op, void* pArg) xFileControl;
-        int function(sqlite3_file*) xSectorSize;
-        int function(sqlite3_file*) xDeviceCharacteristics;
-        /* Methods above are valid for version 1 */
-        int function(sqlite3_file*, int iPg, int pgsz, int, void**) xShmMap;
-        int function(sqlite3_file*, int offset, int n, int flags) xShmLock;
-        void function(sqlite3_file*) xShmBarrier;
-        int function(sqlite3_file*, int deleteFlag) xShmUnmap;
-        /* Methods above are valid for version 2 */
-        int function(sqlite3_file*, sqlite3_int64 iOfst, int iAmt, void** pp) xFetch;
-        int function(sqlite3_file*, sqlite3_int64 iOfst, void* p) xUnfetch;
-        /* Methods above are valid for version 3 */
-        /* Additional methods may be added in future releases */
-    }
-
-    const(sqlite3_io_methods)* pMethods;
+    const(sqlite3_io_methods)* pMethods; /* Methods for an open file */
 }
 
+/*
+** CAPI3REF: OS Interface File Virtual Methods Object
+**
+** Every file opened by the [sqlite3_vfs.xOpen] method populates an
+** [sqlite3_file] object (or, more commonly, a subclass of the
+** [sqlite3_file] object) with a pointer to an instance of this object.
+** This object defines the methods used to perform various operations
+** against the open file represented by the [sqlite3_file] object.
+**
+** If the [sqlite3_vfs.xOpen] method sets the sqlite3_file.pMethods element
+** to a non-NULL pointer, then the sqlite3_io_methods.xClose method
+** may be invoked even if the [sqlite3_vfs.xOpen] reported that it failed.  The
+** only way to prevent a call to xClose following a failed [sqlite3_vfs.xOpen]
+** is for the [sqlite3_vfs.xOpen] to set the sqlite3_file.pMethods element
+** to NULL.
+**
+** The flags argument to xSync may be one of [SQLITE_SYNC_NORMAL] or
+** [SQLITE_SYNC_FULL].  The first choice is the normal fsync().
+** The second choice is a Mac OS X style fullsync.  The [SQLITE_SYNC_DATAONLY]
+** flag may be ORed in to indicate that only the data of the file
+** and not its inode needs to be synced.
+**
+** The integer values to xLock() and xUnlock() are one of
+** <ul>
+** <li> [SQLITE_LOCK_NONE],
+** <li> [SQLITE_LOCK_SHARED],
+** <li> [SQLITE_LOCK_RESERVED],
+** <li> [SQLITE_LOCK_PENDING], or
+** <li> [SQLITE_LOCK_EXCLUSIVE].
+** </ul>
+** xLock() increases the lock. xUnlock() decreases the lock.
+** The xCheckReservedLock() method checks whether any database connection,
+** either in this process or in some other process, is holding a RESERVED,
+** PENDING, or EXCLUSIVE lock on the file.  It returns true
+** if such a lock exists and false otherwise.
+**
+** The xFileControl() method is a generic interface that allows custom
+** VFS implementations to directly control an open file using the
+** [sqlite3_file_control()] interface.  The second "op" argument is an
+** integer opcode.  The third argument is a generic pointer intended to
+** point to a structure that may contain arguments or space in which to
+** write return values.  Potential uses for xFileControl() might be
+** functions to enable blocking locks with timeouts, to change the
+** locking strategy (for example to use dot-file locks), to inquire
+** about the status of a lock, or to break stale locks.  The SQLite
+** core reserves all opcodes less than 100 for its own use.
+** A [file control opcodes | list of opcodes] less than 100 is available.
+** Applications that define a custom xFileControl method should use opcodes
+** greater than 100 to avoid conflicts.  VFS implementations should
+** return [SQLITE_NOTFOUND] for file control opcodes that they do not
+** recognize.
+**
+** The xSectorSize() method returns the sector size of the
+** device that underlies the file.  The sector size is the
+** minimum write that can be performed without disturbing
+** other bytes in the file.  The xDeviceCharacteristics()
+** method returns a bit vector describing behaviors of the
+** underlying device:
+**
+** <ul>
+** <li> [SQLITE_IOCAP_ATOMIC]
+** <li> [SQLITE_IOCAP_ATOMIC512]
+** <li> [SQLITE_IOCAP_ATOMIC1K]
+** <li> [SQLITE_IOCAP_ATOMIC2K]
+** <li> [SQLITE_IOCAP_ATOMIC4K]
+** <li> [SQLITE_IOCAP_ATOMIC8K]
+** <li> [SQLITE_IOCAP_ATOMIC16K]
+** <li> [SQLITE_IOCAP_ATOMIC32K]
+** <li> [SQLITE_IOCAP_ATOMIC64K]
+** <li> [SQLITE_IOCAP_SAFE_APPEND]
+** <li> [SQLITE_IOCAP_SEQUENTIAL]
+** <li> [SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN]
+** <li> [SQLITE_IOCAP_POWERSAFE_OVERWRITE]
+** <li> [SQLITE_IOCAP_IMMUTABLE]
+** <li> [SQLITE_IOCAP_BATCH_ATOMIC]
+** </ul>
+**
+** The SQLITE_IOCAP_ATOMIC property means that all writes of
+** any size are atomic.  The SQLITE_IOCAP_ATOMICnnn values
+** mean that writes of blocks that are nnn bytes in size and
+** are aligned to an address which is an integer multiple of
+** nnn are atomic.  The SQLITE_IOCAP_SAFE_APPEND value means
+** that when data is appended to a file, the data is appended
+** first then the size of the file is extended, never the other
+** way around.  The SQLITE_IOCAP_SEQUENTIAL property means that
+** information is written to disk in the same order as calls
+** to xWrite().
+**
+** If xRead() returns SQLITE_IOERR_SHORT_READ it must also fill
+** in the unread portions of the buffer with zeros.  A VFS that
+** fails to zero-fill short reads might seem to work.  However,
+** failure to zero-fill short reads will eventually lead to
+** database corruption.
+*/
 struct sqlite3_io_methods
 {
     int iVersion;
@@ -781,12 +750,16 @@ struct sqlite3_io_methods
     int function(sqlite3_file*, int op, void* pArg) xFileControl;
     int function(sqlite3_file*) xSectorSize;
     int function(sqlite3_file*) xDeviceCharacteristics;
+    /* Methods above are valid for version 1 */
     int function(sqlite3_file*, int iPg, int pgsz, int, void**) xShmMap;
     int function(sqlite3_file*, int offset, int n, int flags) xShmLock;
     void function(sqlite3_file*) xShmBarrier;
     int function(sqlite3_file*, int deleteFlag) xShmUnmap;
+    /* Methods above are valid for version 2 */
     int function(sqlite3_file*, sqlite3_int64 iOfst, int iAmt, void** pp) xFetch;
     int function(sqlite3_file*, sqlite3_int64 iOfst, void* p) xUnfetch;
+    /* Methods above are valid for version 3 */
+    /* Additional methods may be added in future releases */
 }
 
 /*
@@ -1324,7 +1297,12 @@ struct sqlite3_vfs
     sqlite3_vfs* pNext; /* Next registered VFS */
     const(char)* zName; /* Name of this virtual file system */
     void* pAppData; /* Pointer to application-specific data */
-    int function(sqlite3_vfs*, const(char)* zName, sqlite3_file*, int flags, int* pOutFlags) xOpen;
+    int function(
+        sqlite3_vfs*,
+        const(char)* zName,
+        sqlite3_file*,
+        int flags,
+        int* pOutFlags) xOpen;
     int function(sqlite3_vfs*, const(char)* zName, int syncDir) xDelete;
     int function(sqlite3_vfs*, const(char)* zName, int flags, int* pResOut) xAccess;
     int function(sqlite3_vfs*, const(char)* zName, int nOut, char* zOut) xFullPathname;
@@ -2007,6 +1985,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** is invoked.
 **
 ** <dl>
+** [[SQLITE_DBCONFIG_LOOKASIDE]]
 ** <dt>SQLITE_DBCONFIG_LOOKASIDE</dt>
 ** <dd> ^This option takes three additional arguments that determine the
 ** [lookaside memory allocator] configuration for the [database connection].
@@ -2029,6 +2008,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** memory is in use leaves the configuration unchanged and returns
 ** [SQLITE_BUSY].)^</dd>
 **
+** [[SQLITE_DBCONFIG_ENABLE_FKEY]]
 ** <dt>SQLITE_DBCONFIG_ENABLE_FKEY</dt>
 ** <dd> ^This option is used to enable or disable the enforcement of
 ** [foreign key constraints].  There should be two additional arguments.
@@ -2039,6 +2019,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** following this call.  The second parameter may be a NULL pointer, in
 ** which case the FK enforcement setting is not reported back. </dd>
 **
+** [[SQLITE_DBCONFIG_ENABLE_TRIGGER]]
 ** <dt>SQLITE_DBCONFIG_ENABLE_TRIGGER</dt>
 ** <dd> ^This option is used to enable or disable [CREATE TRIGGER | triggers].
 ** There should be two additional arguments.
@@ -2049,6 +2030,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** following this call.  The second parameter may be a NULL pointer, in
 ** which case the trigger setting is not reported back. </dd>
 **
+** [[SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER]]
 ** <dt>SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</dt>
 ** <dd> ^This option is used to enable or disable the two-argument
 ** version of the [fts3_tokenizer()] function which is part of the
@@ -2062,6 +2044,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** following this call.  The second parameter may be a NULL pointer, in
 ** which case the new setting is not reported back. </dd>
 **
+** [[SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION]]
 ** <dt>SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION</dt>
 ** <dd> ^This option is used to enable or disable the [sqlite3_load_extension()]
 ** interface independently of the [load_extension()] SQL function.
@@ -2079,7 +2062,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** be a NULL pointer, in which case the new setting is not reported back.
 ** </dd>
 **
-** <dt>SQLITE_DBCONFIG_MAINDBNAME</dt>
+** [[SQLITE_DBCONFIG_MAINDBNAME]] <dt>SQLITE_DBCONFIG_MAINDBNAME</dt>
 ** <dd> ^This option is used to change the name of the "main" database
 ** schema.  ^The sole argument is a pointer to a constant UTF8 string
 ** which will become the new schema name in place of "main".  ^SQLite
@@ -2088,6 +2071,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** until after the database connection closes.
 ** </dd>
 **
+** [[SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE]]
 ** <dt>SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE</dt>
 ** <dd> Usually, when a database in wal mode is closed or detached from a
 ** database handle, SQLite checks if this will mean that there are now no
@@ -2101,7 +2085,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** have been disabled - 0 if they are not disabled, 1 if they are.
 ** </dd>
 **
-** <dt>SQLITE_DBCONFIG_ENABLE_QPSG</dt>
+** [[SQLITE_DBCONFIG_ENABLE_QPSG]] <dt>SQLITE_DBCONFIG_ENABLE_QPSG</dt>
 ** <dd>^(The SQLITE_DBCONFIG_ENABLE_QPSG option activates or deactivates
 ** the [query planner stability guarantee] (QPSG).  When the QPSG is active,
 ** a single SQL query statement will always use the same algorithm regardless
@@ -2117,7 +2101,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** following this call.
 ** </dd>
 **
-** <dt>SQLITE_DBCONFIG_TRIGGER_EQP</dt>
+** [[SQLITE_DBCONFIG_TRIGGER_EQP]] <dt>SQLITE_DBCONFIG_TRIGGER_EQP</dt>
 ** <dd> By default, the output of EXPLAIN QUERY PLAN commands does not
 ** include output for any operations performed by trigger programs. This
 ** option is used to set or clear (the default) a flag that governs this
@@ -2129,7 +2113,7 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** it is not disabled, 1 if it is.
 ** </dd>
 **
-** <dt>SQLITE_DBCONFIG_RESET_DATABASE</dt>
+** [[SQLITE_DBCONFIG_RESET_DATABASE]] <dt>SQLITE_DBCONFIG_RESET_DATABASE</dt>
 ** <dd> Set the SQLITE_DBCONFIG_RESET_DATABASE flag and then run
 ** [VACUUM] in order to reset a database back to an empty database
 ** with no schema and no content. The following process works even for
@@ -2148,6 +2132,18 @@ enum SQLITE_CONFIG_SORTERREF_SIZE = 28; /* int nByte */
 ** Because resetting a database is destructive and irreversible, the
 ** process requires the use of this obscure API and multiple steps to help
 ** ensure that it does not happen by accident.
+**
+** [[SQLITE_DBCONFIG_DEFENSIVE]] <dt>SQLITE_DBCONFIG_DEFENSIVE</dt>
+** <dd>The SQLITE_DBCONFIG_DEFENSIVE option activates or deactivates the
+** "defensive" flag for a database connection.  When the defensive
+** flag is enabled, language features that allow ordinary SQL to
+** deliberately corrupt the database file are disabled.  The disabled
+** features include but are not limited to the following:
+** <ul>
+** <li> The [PRAGMA writable_schema=ON] statement.
+** <li> Writes to the [sqlite_dbpage] virtual table.
+** <li> Direct writes to [shadow tables].
+** </ul>
 ** </dd>
 ** </dl>
 */
@@ -2161,7 +2157,8 @@ enum SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE = 1006; /* int int* */
 enum SQLITE_DBCONFIG_ENABLE_QPSG = 1007; /* int int* */
 enum SQLITE_DBCONFIG_TRIGGER_EQP = 1008; /* int int* */
 enum SQLITE_DBCONFIG_RESET_DATABASE = 1009; /* int int* */
-enum SQLITE_DBCONFIG_MAX = 1009; /* Largest DBCONFIG */
+enum SQLITE_DBCONFIG_DEFENSIVE = 1010; /* int int* */
+enum SQLITE_DBCONFIG_MAX = 1010; /* Largest DBCONFIG */
 
 /*
 ** CAPI3REF: Enable Or Disable Extended Result Codes
@@ -3332,11 +3329,9 @@ void sqlite3_progress_handler(sqlite3*, int, int function(void*), void*);
 /* Database filename (UTF-8) */
 /* OUT: SQLite db handle */
 int sqlite3_open(const(char)* filename, sqlite3** ppDb);
-
 /* Database filename (UTF-16) */
 /* OUT: SQLite db handle */
 int sqlite3_open16(const(void)* filename, sqlite3** ppDb);
-
 /* Database filename (UTF-8) */
 /* OUT: SQLite db handle */
 /* Flags */
@@ -3605,9 +3600,19 @@ enum SQLITE_LIMIT_WORKER_THREADS = 11;
 ** on this hint by avoiding the use of [lookaside memory] so as not to
 ** deplete the limited store of lookaside memory. Future versions of
 ** SQLite may act on this hint differently.
+**
+** [[SQLITE_PREPARE_NORMALIZE]] ^(<dt>SQLITE_PREPARE_NORMALIZE</dt>
+** <dd>The SQLITE_PREPARE_NORMALIZE flag indicates that a normalized
+** representation of the SQL statement should be calculated and then
+** associated with the prepared statement, which can be obtained via
+** the [sqlite3_normalized_sql()] interface.)^  The semantics used to
+** normalize a SQL statement are unspecified and subject to change.
+** At a minimum, literal values will be replaced with suitable
+** placeholders.
 ** </dl>
 */
 enum SQLITE_PREPARE_PERSISTENT = 0x01;
+enum SQLITE_PREPARE_NORMALIZE = 0x02;
 
 /*
 ** CAPI3REF: Compiling An SQL Statement
@@ -3720,7 +3725,6 @@ int sqlite3_prepare(
     int nByte,
     sqlite3_stmt** ppStmt,
     const(char*)* pzTail);
-
 /* Database handle */
 /* SQL statement, UTF-8 encoded */
 /* Maximum length of zSql in bytes. */
@@ -3732,7 +3736,6 @@ int sqlite3_prepare_v2(
     int nByte,
     sqlite3_stmt** ppStmt,
     const(char*)* pzTail);
-
 /* Database handle */
 /* SQL statement, UTF-8 encoded */
 /* Maximum length of zSql in bytes. */
@@ -3746,7 +3749,6 @@ int sqlite3_prepare_v3(
     uint prepFlags,
     sqlite3_stmt** ppStmt,
     const(char*)* pzTail);
-
 /* Database handle */
 /* SQL statement, UTF-16 encoded */
 /* Maximum length of zSql in bytes. */
@@ -3758,7 +3760,6 @@ int sqlite3_prepare16(
     int nByte,
     sqlite3_stmt** ppStmt,
     const(void*)* pzTail);
-
 /* Database handle */
 /* SQL statement, UTF-16 encoded */
 /* Maximum length of zSql in bytes. */
@@ -3770,7 +3771,6 @@ int sqlite3_prepare16_v2(
     int nByte,
     sqlite3_stmt** ppStmt,
     const(void*)* pzTail);
-
 /* Database handle */
 /* SQL statement, UTF-16 encoded */
 /* Maximum length of zSql in bytes. */
@@ -3796,6 +3796,11 @@ int sqlite3_prepare16_v3(
 ** ^The sqlite3_expanded_sql(P) interface returns a pointer to a UTF-8
 ** string containing the SQL text of prepared statement P with
 ** [bound parameters] expanded.
+** ^The sqlite3_normalized_sql(P) interface returns a pointer to a UTF-8
+** string containing the normalized SQL text of prepared statement P.  The
+** semantics used to normalize a SQL statement are unspecified and subject
+** to change.  At a minimum, literal values will be replaced with suitable
+** placeholders.
 **
 ** ^(For example, if a prepared statement is created using the SQL
 ** text "SELECT $abc,:xyz" and if parameter $abc is bound to integer 2345
@@ -3811,14 +3816,16 @@ int sqlite3_prepare16_v3(
 ** bound parameter expansions.  ^The [SQLITE_OMIT_TRACE] compile-time
 ** option causes sqlite3_expanded_sql() to always return NULL.
 **
-** ^The string returned by sqlite3_sql(P) is managed by SQLite and is
-** automatically freed when the prepared statement is finalized.
+** ^The strings returned by sqlite3_sql(P) and sqlite3_normalized_sql(P)
+** are managed by SQLite and are automatically freed when the prepared
+** statement is finalized.
 ** ^The string returned by sqlite3_expanded_sql(P), on the other hand,
 ** is obtained from [sqlite3_malloc()] and must be free by the application
 ** by passing it to [sqlite3_free()].
 */
 const(char)* sqlite3_sql(sqlite3_stmt* pStmt);
 char* sqlite3_expanded_sql(sqlite3_stmt* pStmt);
+const(char)* sqlite3_normalized_sql(sqlite3_stmt* pStmt);
 
 /*
 ** CAPI3REF: Determine If An SQL Statement Writes The Database
@@ -5515,13 +5522,17 @@ int sqlite3_collation_needed16(
 ** The code to implement this API is not available in the public release
 ** of SQLite.
 */
-
 /* Database to be rekeyed */
 /* The key */
-
+int sqlite3_key(sqlite3* db, const(void)* pKey, int nKey);
 /* Database to be rekeyed */
 /* Name of the database */
 /* The key */
+int sqlite3_key_v2(
+    sqlite3* db,
+    const(char)* zDbName,
+    const(void)* pKey,
+    int nKey);
 
 /*
 ** Change the key on an open database.  If the current database is not
@@ -5531,20 +5542,24 @@ int sqlite3_collation_needed16(
 ** The code to implement this API is not available in the public release
 ** of SQLite.
 */
-
 /* Database to be rekeyed */
 /* The new key */
-
+int sqlite3_rekey(sqlite3* db, const(void)* pKey, int nKey);
 /* Database to be rekeyed */
 /* Name of the database */
 /* The new key */
+int sqlite3_rekey_v2(
+    sqlite3* db,
+    const(char)* zDbName,
+    const(void)* pKey,
+    int nKey);
 
 /*
 ** Specify the activation key for a SEE database.  Unless
 ** activated, none of the SEE routines will work.
 */
-
 /* Activation phrase */
+void sqlite3_activate_see(const(char)* zPassPhrase);
 
 /*
 ** Specify the activation key for a CEROD database.  Unless
@@ -6276,14 +6291,31 @@ void sqlite3_reset_auto_extension();
 struct sqlite3_module
 {
     int iVersion;
-    int function(sqlite3*, void* pAux, int argc, const(char*)* argv, sqlite3_vtab** ppVTab, char**) xCreate;
-    int function(sqlite3*, void* pAux, int argc, const(char*)* argv, sqlite3_vtab** ppVTab, char**) xConnect;
+    int function(
+        sqlite3*,
+        void* pAux,
+        int argc,
+        const(char*)* argv,
+        sqlite3_vtab** ppVTab,
+        char**) xCreate;
+    int function(
+        sqlite3*,
+        void* pAux,
+        int argc,
+        const(char*)* argv,
+        sqlite3_vtab** ppVTab,
+        char**) xConnect;
     int function(sqlite3_vtab* pVTab, sqlite3_index_info*) xBestIndex;
     int function(sqlite3_vtab* pVTab) xDisconnect;
     int function(sqlite3_vtab* pVTab) xDestroy;
     int function(sqlite3_vtab* pVTab, sqlite3_vtab_cursor** ppCursor) xOpen;
     int function(sqlite3_vtab_cursor*) xClose;
-    int function(sqlite3_vtab_cursor*, int idxNum, const(char)* idxStr, int argc, sqlite3_value** argv) xFilter;
+    int function(
+        sqlite3_vtab_cursor*,
+        int idxNum,
+        const(char)* idxStr,
+        int argc,
+        sqlite3_value** argv) xFilter;
     int function(sqlite3_vtab_cursor*) xNext;
     int function(sqlite3_vtab_cursor*) xEof;
     int function(sqlite3_vtab_cursor*, sqlite3_context*, int) xColumn;
@@ -6293,13 +6325,21 @@ struct sqlite3_module
     int function(sqlite3_vtab* pVTab) xSync;
     int function(sqlite3_vtab* pVTab) xCommit;
     int function(sqlite3_vtab* pVTab) xRollback;
-    int function(sqlite3_vtab* pVtab, int nArg, const(char)* zName, void function(sqlite3_context*, int, sqlite3_value**)* pxFunc, void** ppArg) xFindFunction;
+    int function(
+        sqlite3_vtab* pVtab,
+        int nArg,
+        const(char)* zName,
+        void function(sqlite3_context*, int, sqlite3_value**)* pxFunc,
+        void** ppArg) xFindFunction;
     int function(sqlite3_vtab* pVtab, const(char)* zNew) xRename;
     /* The methods above are in version 1 of the sqlite_module object. Those
     ** below are for version 2 and greater. */
     int function(sqlite3_vtab* pVTab, int) xSavepoint;
     int function(sqlite3_vtab* pVTab, int) xRelease;
     int function(sqlite3_vtab* pVTab, int) xRollbackTo;
+    /* The methods above are in versions 1 and 2 of the sqlite_module object.
+    ** Those below are for version 3 and greater. */
+    int function(const(char)*) xShadowName;
 }
 
 /*
@@ -6519,7 +6559,6 @@ int sqlite3_create_module(
     const(char)* zName,
     const(sqlite3_module)* p,
     void* pClientData);
-
 /* SQLite connection to register module with */
 /* Name of the module */
 /* Methods for the module */
@@ -7251,6 +7290,7 @@ enum SQLITE_TESTCTRL_RESERVE = 14;
 enum SQLITE_TESTCTRL_OPTIMIZATIONS = 15;
 enum SQLITE_TESTCTRL_ISKEYWORD = 16; /* NOT USED */
 enum SQLITE_TESTCTRL_SCRATCHMALLOC = 17; /* NOT USED */
+enum SQLITE_TESTCTRL_INTERNAL_FUNCTIONS = 17;
 enum SQLITE_TESTCTRL_LOCALTIME_FAULT = 18;
 enum SQLITE_TESTCTRL_EXPLAIN_STMT = 19; /* NOT USED */
 enum SQLITE_TESTCTRL_ONCE_RESET_THRESHOLD = 19;
@@ -7996,7 +8036,11 @@ struct sqlite3_pcache_methods2
     int function(sqlite3_pcache*) xPagecount;
     sqlite3_pcache_page* function(sqlite3_pcache*, uint key, int createFlag) xFetch;
     void function(sqlite3_pcache*, sqlite3_pcache_page*, int discard) xUnpin;
-    void function(sqlite3_pcache*, sqlite3_pcache_page*, uint oldKey, uint newKey) xRekey;
+    void function(
+        sqlite3_pcache*,
+        sqlite3_pcache_page*,
+        uint oldKey,
+        uint newKey) xRekey;
     void function(sqlite3_pcache*, uint iLimit) xTruncate;
     void function(sqlite3_pcache*) xDestroy;
     void function(sqlite3_pcache*) xShrink;
@@ -8665,6 +8709,7 @@ int sqlite3_vtab_config(sqlite3*, int op, ...);
 ** can use to customize and optimize their behavior.
 **
 ** <dl>
+** [[SQLITE_VTAB_CONSTRAINT_SUPPORT]]
 ** <dt>SQLITE_VTAB_CONSTRAINT_SUPPORT
 ** <dd>Calls of the form
 ** [sqlite3_vtab_config](db,SQLITE_VTAB_CONSTRAINT_SUPPORT,X) are supported,
@@ -9410,7 +9455,7 @@ struct sqlite3_rtree_query_info
     sqlite3_int64 iRowid; /* Rowid for current entry */
     sqlite3_rtree_dbl rParentScore; /* Score of parent node */
     int eParentWithin; /* Visibility of parent node */
-    int eWithin; /* OUT: Visiblity */
+    int eWithin; /* OUT: Visibility */
     sqlite3_rtree_dbl rScore; /* OUT: Write the score here */
     /* The following fields are only available in 3.8.11 and later */
     sqlite3_value** apSqlParam; /* Original SQL values of parameters */
@@ -9877,11 +9922,35 @@ enum FULLY_WITHIN = 2; /* Object fully contained within query region */
 ** consecutively. There is no chance that the iterator will visit a change
 ** the applies to table X, then one for table Y, and then later on visit
 ** another change for table X.
+**
+** The behavior of sqlite3changeset_start_v2() and its streaming equivalent
+** may be modified by passing a combination of
+** [SQLITE_CHANGESETSTART_INVERT | supported flags] as the 4th parameter.
+**
+** Note that the sqlite3changeset_start_v2() API is still <b>experimental</b>
+** and therefore subject to change.
 */
 
 /* OUT: New changeset iterator handle */
 /* Size of changeset blob in bytes */
 /* Pointer to blob containing changeset */
+
+/* OUT: New changeset iterator handle */
+/* Size of changeset blob in bytes */
+/* Pointer to blob containing changeset */
+/* SESSION_CHANGESETSTART_* flags */
+
+/*
+** CAPI3REF: Flags for sqlite3changeset_start_v2
+**
+** The following flags may passed via the 4th parameter to
+** [sqlite3changeset_start_v2] and [sqlite3changeset_start_v2_strm]:
+**
+** <dt>SQLITE_CHANGESETAPPLY_INVERT <dd>
+**   Invert the changeset while iterating through it. This is equivalent to
+**   inverting a changeset using sqlite3changeset_invert() before applying it.
+**   It is an error to specify this flag with a patchset.
+*/
 
 /*
 ** CAPI3REF: Advance A Changeset Iterator
@@ -10514,7 +10583,7 @@ enum FULLY_WITHIN = 2; /* Object fully contained within query region */
 
 /* First argument passed to xConflict */
 /* OUT: Rebase data */
-/* Combination of SESSION_APPLY_* flags */
+/* SESSION_CHANGESETAPPLY_* flags */
 
 /*
 ** CAPI3REF: Flags for sqlite3changeset_apply_v2
@@ -10531,6 +10600,11 @@ enum FULLY_WITHIN = 2; /* Object fully contained within query region */
 **   causes the sessions module to omit this savepoint. In this case, if the
 **   caller has an open transaction or savepoint when apply_v2() is called,
 **   it may revert the partially applied changeset by rolling it back.
+**
+** <dt>SQLITE_CHANGESETAPPLY_INVERT <dd>
+**   Invert the changeset before applying it. This is equivalent to inverting
+**   a changeset using sqlite3changeset_invert() before applying it. It is
+**   an error to specify this flag with a patchset.
 */
 
 /*
@@ -10882,6 +10956,44 @@ enum FULLY_WITHIN = 2; /* Object fully contained within query region */
 /* First argument passed to xConflict */
 
 /*
+** CAPI3REF: Configure global parameters
+**
+** The sqlite3session_config() interface is used to make global configuration
+** changes to the sessions module in order to tune it to the specific needs
+** of the application.
+**
+** The sqlite3session_config() interface is not threadsafe. If it is invoked
+** while any other thread is inside any other sessions method then the
+** results are undefined. Furthermore, if it is invoked after any sessions
+** related objects have been created, the results are also undefined.
+**
+** The first argument to the sqlite3session_config() function must be one
+** of the SQLITE_SESSION_CONFIG_XXX constants defined below. The
+** interpretation of the (void*) value passed as the second parameter and
+** the effect of calling this function depends on the value of the first
+** parameter.
+**
+** <dl>
+** <dt>SQLITE_SESSION_CONFIG_STRMSIZE<dd>
+**    By default, the sessions module streaming interfaces attempt to input
+**    and output data in approximately 1 KiB chunks. This operand may be used
+**    to set and query the value of this configuration setting. The pointer
+**    passed as the second argument must point to a value of type (int).
+**    If this value is greater than 0, it is used as the new streaming data
+**    chunk size for both input and output. Before returning, the (int) value
+**    pointed to by pArg is set to the final value of the streaming interface
+**    chunk size.
+** </dl>
+**
+** This function returns SQLITE_OK if successful, or an SQLite error code
+** otherwise.
+*/
+
+/*
+** CAPI3REF: Values for sqlite3session_config().
+*/
+
+/*
 ** Make sure we can call this stuff from C++.
 */
 
@@ -10922,7 +11034,12 @@ struct Fts5Context;
 /* Context for returning result/error */
 /* Number of values in apVal[] array */
 /* Array of trailing arguments */
-alias fts5_extension_function = void function(const(Fts5ExtensionApi)* pApi, Fts5Context* pFts, sqlite3_context* pCtx, int nVal, sqlite3_value** apVal);
+alias fts5_extension_function = void function(
+    const(Fts5ExtensionApi)* pApi,
+    Fts5Context* pFts,
+    sqlite3_context* pCtx,
+    int nVal,
+    sqlite3_value** apVal);
 
 struct Fts5PhraseIter
 {
@@ -11158,7 +11275,12 @@ struct Fts5ExtensionApi
     /* Text to tokenize */
     /* Context passed to xToken() */
     /* Callback */
-    int function(Fts5Context*, const(char)* pText, int nText, void* pCtx, int function(void*, int, const(char)*, int, int, int) xToken) xTokenize;
+    int function(
+        Fts5Context*,
+        const(char)* pText,
+        int nText,
+        void* pCtx,
+        int function(void*, int, const(char)*, int, int, int) xToken) xTokenize;
 
     int function(Fts5Context*) xPhraseCount;
     int function(Fts5Context*, int iPhrase) xPhraseSize;
@@ -11170,7 +11292,11 @@ struct Fts5ExtensionApi
     int function(Fts5Context*, int iCol, const(char*)* pz, int* pn) xColumnText;
     int function(Fts5Context*, int iCol, int* pnToken) xColumnSize;
 
-    int function(Fts5Context*, int iPhrase, void* pUserData, int function(const(Fts5ExtensionApi)*, Fts5Context*, void*)) xQueryPhrase;
+    int function(
+        Fts5Context*,
+        int iPhrase,
+        void* pUserData,
+        int function(const(Fts5ExtensionApi)*, Fts5Context*, void*)) xQueryPhrase;
     int function(Fts5Context*, void* pAux, void function(void*) xDelete) xSetAuxdata;
     void* function(Fts5Context*, int bClear) xGetAuxdata;
 
@@ -11392,7 +11518,13 @@ struct fts5_tokenizer
     /* Size of token in bytes */
     /* Byte offset of token within input text */
     /* Byte offset of end of token within input text */
-    int function(Fts5Tokenizer*, void* pCtx, int flags, const(char)* pText, int nText, int function(void* pCtx, int tflags, const(char)* pToken, int nToken, int iStart, int iEnd) xToken) xTokenize;
+    int function(
+        Fts5Tokenizer*,
+        void* pCtx,
+        int flags,
+        const(char)* pText,
+        int nText,
+        int function(void* pCtx, int tflags, const(char)* pToken, int nToken, int iStart, int iEnd) xToken) xTokenize;
 }
 
 /* Flags that may be passed as the third argument to xTokenize() */
@@ -11417,13 +11549,27 @@ struct fts5_api
     int iVersion; /* Currently always set to 2 */
 
     /* Create a new tokenizer */
-    int function(fts5_api* pApi, const(char)* zName, void* pContext, fts5_tokenizer* pTokenizer, void function(void*) xDestroy) xCreateTokenizer;
+    int function(
+        fts5_api* pApi,
+        const(char)* zName,
+        void* pContext,
+        fts5_tokenizer* pTokenizer,
+        void function(void*) xDestroy) xCreateTokenizer;
 
     /* Find an existing tokenizer */
-    int function(fts5_api* pApi, const(char)* zName, void** ppContext, fts5_tokenizer* pTokenizer) xFindTokenizer;
+    int function(
+        fts5_api* pApi,
+        const(char)* zName,
+        void** ppContext,
+        fts5_tokenizer* pTokenizer) xFindTokenizer;
 
     /* Create a new auxiliary function */
-    int function(fts5_api* pApi, const(char)* zName, void* pContext, fts5_extension_function xFunction, void function(void*) xDestroy) xCreateFunction;
+    int function(
+        fts5_api* pApi,
+        const(char)* zName,
+        void* pContext,
+        fts5_extension_function xFunction,
+        void function(void*) xDestroy) xCreateFunction;
 }
 
 /*
