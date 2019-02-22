@@ -3,7 +3,7 @@ d2sqlcipher provides a thin and convenient wrapper around the SQLite3/SQLCipher 
 
 Features:
 $(UL
-    $(LI SQLCipher encryption support).
+    $(LI SQLCipher encryption support.)
     $(LI Use reference-counted structs (`Database`, `Statement`) instead of SQLite objects
     pointers.)
     $(LI Run multistatement SQL code with `Database.run()`.)
