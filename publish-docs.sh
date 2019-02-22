@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if (( "$#" != 3 )); then
+if (( "$#" != 2 )); then
   echo "Please provide a valid git repo to push to and a correct branch name"
   exit 1
 fi

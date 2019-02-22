@@ -1,8 +1,9 @@
 /++
-d2sqlcipher provides a thin and convenient wrapper around the SQLite C API.
+d2sqlcipher provides a thin and convenient wrapper around the SQLite3/SQLCipher C API.
 
 Features:
 $(UL
+    $(LI SQLCipher encryption support)
     $(LI Use reference-counted structs (`Database`, `Statement`) instead of SQLite objects
     pointers.)
     $(LI Run multistatement SQL code with `Database.run()`.)
@@ -27,10 +28,10 @@ $(UL
 )
 
 Authors:
-    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
+    Jeremiasz Nelz (remi6397), Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
 
 Copyright:
-    Copyright 2011-18 Nicolas Sicard.
+    Copyright © 2019 Jeremiasz Nelz; Copyright 2011-18 Nicolas Sicard.
 
 License:
     $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
