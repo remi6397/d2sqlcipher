@@ -1,5 +1,5 @@
 /++
-D2SQLite3 provides a thin and convenient wrapper around the SQLite C API.
+d2sqlcipher provides a thin and convenient wrapper around the SQLite C API.
 
 Features:
 $(UL
@@ -27,7 +27,7 @@ $(UL
 )
 
 Authors:
-    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/biozic/d2sqlite3)
+    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
 
 Copyright:
     Copyright 2011-18 Nicolas Sicard.
@@ -35,19 +35,19 @@ Copyright:
 License:
     $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
 +/
-module d2sqlite3;
+module d2sqlcipher;
 
-public import d2sqlite3.library;
-public import d2sqlite3.database;
-public import d2sqlite3.statement;
-public import d2sqlite3.results;
-public import d2sqlite3.sqlite3;
+public import d2sqlcipher.library;
+public import d2sqlcipher.database;
+public import d2sqlcipher.statement;
+public import d2sqlcipher.results;
+public import d2sqlcipher.sqlite3;
 
 ///
 unittest  // Documentation example
 {
     // Note: exception handling is left aside for clarity.
-    import d2sqlite3;
+    import d2sqlcipher;
     import std.typecons : Nullable;
 
     // Open a database in memory.

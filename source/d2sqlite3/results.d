@@ -2,7 +2,7 @@
 Managing query results.
 
 Authors:
-    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/biozic/d2sqlite3)
+    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
 
 Copyright:
     Copyright 2011-18 Nicolas Sicard.
@@ -10,12 +10,12 @@ Copyright:
 License:
     $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
 +/
-module d2sqlite3.results;
+module d2sqlcipher.results;
 
-import d2sqlite3.database;
-import d2sqlite3.statement;
-import d2sqlite3.sqlite3;
-import d2sqlite3.internal.util;
+import d2sqlcipher.database;
+import d2sqlcipher.statement;
+import d2sqlcipher.sqlite3;
+import d2sqlcipher.internal.util;
 
 import std.conv : to;
 import std.exception : enforce;
@@ -46,7 +46,7 @@ private:
     int colCount = 0;
     Row current;
 
-package(d2sqlite3):
+package(d2sqlcipher):
     this(Statement statement) {
         if (!statement.empty) {
             version (_UnlockNotify)

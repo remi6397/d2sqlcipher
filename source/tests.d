@@ -1,6 +1,6 @@
 module tests.d;
 
-version (unittest)  : import d2sqlite3;
+version (unittest)  : import d2sqlcipher;
 import std.exception : assertThrown, assertNotThrown;
 import std.string : format;
 import std.typecons : Nullable;
@@ -830,4 +830,14 @@ unittest  // UTF-8
         return true;
     });
     assert(ran);
+}
+
+version (sqlcipher) {
+    unittest  // Set key
+    {
+        auto db = Database(":memory:");
+        db.key("lorem ipsum dolor sit amet");
+        assert(db.run("CREATE TABLE test (msg TEXT);
+                   INSERT INTO test (msg) VALUES ('ABC')"));
+    }
 }

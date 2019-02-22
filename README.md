@@ -24,7 +24,7 @@ Set the right configuration for you project in its `dub.json` file using the `su
 
 ```json
     "subConfigurations": {
-        "d2sqlite3": "all-included"
+        "d2sqlcipher": "all-included"
     }
 ```
 

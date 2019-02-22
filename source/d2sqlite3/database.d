@@ -2,7 +2,7 @@
 Managing SQLite3 database connections.
 
 Authors:
-    Jeremiasz Nelz (remi6397), Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/biozic/d2sqlite3)
+    Jeremiasz Nelz (remi6397), Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
 
 Copyright:
     Copyright © 2019 Jeremiasz Nelz; Copyright 2011-18 Nicolas Sicard.
@@ -10,13 +10,13 @@ Copyright:
 License:
     $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
 +/
-module d2sqlite3.database;
+module d2sqlcipher.database;
 
-import d2sqlite3.statement;
-import d2sqlite3.results;
-import d2sqlite3.sqlite3;
-import d2sqlite3.internal.memory;
-import d2sqlite3.internal.util;
+import d2sqlcipher.statement;
+import d2sqlcipher.results;
+import d2sqlcipher.sqlite3;
+import d2sqlcipher.internal.memory;
+import d2sqlcipher.internal.util;
 
 import std.conv : to;
 import std.exception : enforce;
@@ -986,7 +986,7 @@ public:
         }
 
         /// Setup and waits for unlock notify using the provided `IUnlockNotifyHandler`
-        package(d2sqlite3) auto waitForUnlockNotify() {
+        package(d2sqlcipher) auto waitForUnlockNotify() {
             if (p.unlockNotifyHandler is null)
                 return SQLITE_LOCKED;
 
@@ -1294,7 +1294,7 @@ class SqliteException : Exception {
         super(msg, file, line, next);
     }
 
-package(d2sqlite3):
+package(d2sqlcipher):
     this(string msg, int code, string sql = null, string file = __FILE__,
             size_t line = __LINE__, Throwable next = null) {
         this("error %d: %s".format(code, msg), sql, code, file, line, next);

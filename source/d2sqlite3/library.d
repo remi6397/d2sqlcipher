@@ -2,7 +2,7 @@
 Miscellaneous SQLite3 library functions.
 
 Authors:
-    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/biozic/d2sqlite3)
+    Nicolas Sicard (biozic) and other contributors at $(LINK https://github.com/remi6397/d2sqlcipher)
 
 Copyright:
     Copyright 2011-18 Nicolas Sicard.
@@ -10,10 +10,10 @@ Copyright:
 License:
     $(LINK2 http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
 +/
-module d2sqlite3.library;
+module d2sqlcipher.library;
 
-import d2sqlite3.sqlite3;
-import d2sqlite3.database : SqliteException;
+import d2sqlcipher.sqlite3;
+import d2sqlcipher.database : SqliteException;
 import std.exception : enforce;
 import std.string : format;
 
@@ -22,7 +22,7 @@ Gets the library's version string (e.g. "3.8.7"), version number (e.g. 3_008_007
 or source ID.
 
 These values are returned by the linked SQLite C library. They can be checked against
-the values of the enums defined by the `d2sqlite3` package (`SQLITE_VERSION`,
+the values of the enums defined by the `d2sqlcipher` package (`SQLITE_VERSION`,
 `SQLITE_VERSION_NUMBER` and `SQLITE_SOURCE_ID`).
 
 See_Also: $(LINK http://www.sqlite.org/c3ref/libversion.html).
